@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Tetris Game</title>
+    <style>
+
+        body{
+            background-image: url(239007.jpg);
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+
+        }
+        .container{
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin-top: 2%;
+            margin-left: 14%;
+            margin-right: 14%;
+        }
+        .grid {
+            width: 200px;
+            height: 400px;
+            background-color: #d5d79af8;
+            display: flex;
+            flex-wrap: wrap;
+            border-radius: 5px;
+            box-shadow:rgb(218, 11, 11) 0px 20px 30px -10px;
+        }
+
+        .mini-grid {
+            margin-left: 50px;
+            width: 80px;
+            height: 80px;
+            background-color: #d5d79af8;
+            display: flex;
+            flex-wrap: wrap;
+            border-radius: 5px;
+            box-shadow: rgb(229, 11, 11) 0px 20px 30px -10px;
+        }
+
+        .grid div {
+            width: 20px;
+            height: 20px;
+            box-sizing: border-box;
+            border: 1px solid white;
+            border-radius: 5px;
+        }
+
+
+
+        .mini-grid div {
+            width: 20px;
+            height: 20px;
+            box-sizing: border-box;
+            border: 1px solid white;
+            border-radius: 5px;            
+        }        
+    
+        button {
+            padding: 0.6em 2em;
+            border: none;
+            outline: none;
+            color: rgb(255, 255, 255);
+            background: #111;
+            cursor: pointer;
+            position: relative;
+            z-index: 0;
+            border-radius: 10px;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        button:before {
+            content: "";
+            background: linear-gradient(
+                45deg,
+                #ff0000,
+                #ff7300,
+                #fffb00,
+                #48ff00,
+                #00ffd5,
+                #002bff,
+                #7a00ff,
+                #ff00c8,
+                #ff0000
+            );
+            position: absolute; 
+            top: -2px; 
+            left: -2px; 
+            background-size: 400%;
+            z-index: -1;
+            filter: blur(5px);
+            -webkit-filter: blur(5px);
+            width: calc(100% + 4px);
+            height: calc(100% + 4px);
+            animation: glowing-button-85 20s linear infinite;
+            transition: opacity 0.3s ease-in-out;
+            border-radius: 10px;
+}
+
+            @keyframes glowing-button-85 {
+            0% {
+                background-position: 0 0;
+                }
+            50% {
+                background-position: 400% 0;
+                }
+            100% {
+                background-position: 0 0;
+            }
+}
+
+        button:after {
+            z-index: -1;
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #222;
+            left: 0;
+            top: 0;
+            border-radius: 10px;
+        }
+
+        h3{
+            
+            font-size: 30px;
+            margin: 14px;
+            animation: Color 3s linear infinite;
+        }
+
+        @keyframes Color{
+            0%{color:#48ff00;}  20%{color:#002bff;}  40%{color:#fffb00;}  60%{color:#ff7300;}   80%{color:#ff0000;  }  100%{color:#48ff00;}
+        }
+
+        
+        .help-tip {    
+        position: absolute;
+        top: 3.8%;
+        
+        text-align: center;
+        background-color: white;
+        color: black;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        font-size: 12px;
+        line-height: 26px;
+        cursor: default;
+        transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+        }
+
+        .help-tip:hover {
+            cursor: pointer;
+            background-color: black;
+            color: white;
+            text-align: center;
+        }
+
+        .help-tip p {
+            visibility: hidden;
+            opacity: 0;
+            text-align: left;
+            background-color: black;
+            padding: 10px;
+            padding: 10px;
+            width: 300px;
+            border-radius: 4px;
+            right: -4px;
+            color: white;
+            font-size: 13px;
+            line-height: normal;
+            transform: scale(0.7);
+            transform-origin: top left;
+            transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+            }
+
+        .help-tip:hover p {
+            cursor: default;
+            visibility: visible;
+            opacity: 1;
+            transform: scale(1.0);
+            }
+
+        .help-tip p:before {
+            position: absolute;
+            content: '';
+            width: 0;
+            height: 0;
+            border: 6px solid transparent;
+            border-bottom-color: white;
+            right: 300px;
+            top: -12px;
+        }
+
+        .help-tip p:after {
+            width: 100%;
+            height: 40px;
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: 0;
+        }
+        #but{
+            margin-left: 55.7%;
+            margin-top: -17%;
+            
+        }
+
+        #control-buttons {
+            display: none;
+        }
+
+        #left-button {
+            top: 114px;
+
+        }
+
+        #right-button {
+            top: 114px;
+            left: 104px;
+        
+        }
+
+        #right-button:hover,#left-button:hover{
+            cursor: e-resize;
+        }
+
+        #down-button:hover{
+            cursor: n-resize;
+        }
+
+        #rotate-button:hover{
+            cursor: all-scroll;
+        }
+
+        #down-button {
+            top: 114px;
+            left: -180px;
+
+        }
+
+        #rotate-button {
+            top: 74px;
+            left: -85px;
+     
+        }
+
+        #toggle-button{
+            left: 28px;
+        }
+
+        #muteIcon {
+            color: #ddd;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+                /* Style the volume slider */
+    #volumeSlider {
+        position: fixed;
+        top: 60px;
+        right: 20px;
+        width: 150px;
+        -webkit-appearance: none;
+        appearance: none;
+        height: 5px;
+        background: #ddd;
+        outline: none;
+        opacity: 0.7;
+        transition: opacity .2s;
+        cursor: pointer;
+    }
+
+    #volumeSlider:hover {
+        opacity: 1;
+    }
+
+    #volumeSlider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 15px;
+        height: 15px;
+        background: #4CAF50;
+        cursor: pointer;
+        border-radius: 50%;
+    }
+
+    #volumeSlider::-moz-range-thumb {
+        width: 15px;
+        height: 15px;
+        background: #4CAF50;
+        cursor: pointer;
+        border-radius: 50%;
+    }
+
+    @keyframes shake {
+    0% { transform: translate(1px, 1px) rotate(0deg); }
+    10% { transform: translate(-1px, -2px) rotate(-1deg); }
+    20% { transform: translate(-3px, 0px) rotate(1deg); }
+    30% { transform: translate(3px, 2px) rotate(0deg); }
+    40% { transform: translate(1px, -1px) rotate(1deg); }
+    50% { transform: translate(-1px, 2px) rotate(-1deg); }
+    60% { transform: translate(-3px, 1px) rotate(0deg); }
+    70% { transform: translate(3px, 1px) rotate(-1deg); }
+    80% { transform: translate(-1px, -1px) rotate(1deg); }
+    90% { transform: translate(1px, 2px) rotate(0deg); }
+    100% { transform: translate(1px, -2px) rotate(-1deg); }
+    }
+
+    .shake {
+    animation: shake 0.5s;
+    animation-iteration-count: 1;
+    }
+    .ghost {
+    opacity: 0.3;
+    background-color: black; /* or any other color */
+    }
+
+    </style>
+</head>
+<body>
+    <center><h3>Score: <span id="score">0</span></h3> 
+    <button id="start-button">Start/Pause</button>
+    <button onclick="refreshPage();" id="restart-button">Restart</button> </center>
+            <div style="align-items: center;" class="help-tip"><B>?</B>
+        <p><b>How to play:</b><br>Press the Start/pause button to start and pause the game.<br>
+        Press the Restart button to restart the game.<br>
+        Press the ARROW UP key or "W" to Rotate the block.<br>
+        Press the ARROW DOWN key or "S" to make the block fall faster.<br>
+        Press the ARROW LEF key or "A" to move the block Left.<br>
+        Press the ARROW RIGHT key or "D" to move the block Right.<br>
+        </p>
+    </div> 
+        <!-- Audio Element -->
+    <audio id="backgroundMusic" loop>
+        <source src="tetris bg.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <!-- JavaScript to control the audio -->
+    <i id="muteIcon" class="fas fa-volume-up"></i>
+
+    <!-- Volume Slider -->
+    <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="1">
+
+<div class="container">
+    <div class="grid">
+        
+        <script>
+            for (let i = 0; i < 200; i++) {
+                document.write('<div></div>');
+            }
+        </script>
+
+        <script>
+            for (let i = 0; i < 10; i++) {
+                document.write('<div style="border: none;" class="taken"></div>');
+            }
+        </script>
+    </div>
+
+    <div class="mini-grid">
+        <script>
+            for(let i = 0; i < 16; i++)
+            {
+                document.write('<div></div>');
+            }
+        </script>
+    </div>
+</div> 
+
+<div id="but">
+    <div id="control-buttons">
+    <button id="left-button">Left</button>
+    <button id="right-button">Right</button>
+    <button id="rotate-button">Rotate</button>
+    <button id="down-button">Down</button>
+</div>
+<button id="toggle-button">Show/Hide Virtual Controls</button> </div>
+    
+
+    <script>
+        const grid = document.querySelector('.grid');
+        let squares = Array.from(grid.querySelectorAll('div'));
+        const width = 10;
+        const scoreDisplay = document.querySelector('#score');
+        const startBtn = document.querySelector('#start-button');
+        let nextRandom = 0;
+        let timeId;
+        let score = 0;
+        const grid_shake = document.querySelector('.grid');
+        const skinColor =['#FF0000',/red/, '#0437F2', '#FF5F1F', '#FFD700']
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+        const audio = document.getElementById('backgroundMusic');
+        const muteIcon = document.getElementById('muteIcon');
+        const volumeSlider = document.getElementById('volumeSlider');
+
+        // Play audio when page loads
+        function playAudio() {
+            audio.play().then(() => {
+                // Autoplay worked, no further action needed
+            }).catch(error => {
+                // Autoplay was prevented, user interaction needed
+                console.log('Autoplay prevented:', error);
+            });
+        }
+
+        playAudio();
+
+        // Function to toggle mute/unmute
+        muteIcon.addEventListener('click', function () {
+            if (audio.muted) {
+                audio.muted = false;
+                muteIcon.classList.remove('fa-volume-mute');
+                muteIcon.classList.add('fa-volume-up');
+                // Attempt to play again in case it was stopped
+                audio.play();
+            } else {
+                audio.muted = true;
+                muteIcon.classList.remove('fa-volume-up');
+                muteIcon.classList.add('fa-volume-mute');
+            }
+        });
+
+        // Add a click event listener to the document to handle the first user interaction
+        document.addEventListener('click', function handleFirstInteraction() {
+            playAudio();
+            // Remove the event listener after the first interaction
+            document.removeEventListener('click', handleFirstInteraction);
+        });
+
+        // Handle volume slider changes
+        volumeSlider.addEventListener('input', function () {
+            audio.volume = volumeSlider.value;
+        });
+
+        // Prevent arrow keys from changing the volume slider when focused
+        volumeSlider.addEventListener('keydown', function (event) {
+            if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+                event.preventDefault();
+            }
+        });
+    });
+
+            
+        //virtual buttons for movement
+        document.getElementById('toggle-button').addEventListener('click', function() {
+            var controlButtons = document.getElementById('control-buttons');
+            if (controlButtons.style.display === 'none' || controlButtons.style.display === '') {
+                controlButtons.style.display = 'block';
+            } else {
+                controlButtons.style.display = 'none';
+            }
+        });
+
+        document.getElementById('left-button').addEventListener('click', function() {
+            
+            moveLeft();
+        });
+
+        document.getElementById('right-button').addEventListener('click', function() {
+        moveRight();
+        });
+
+        document.getElementById('rotate-button').addEventListener('click', function() {
+            rotate();
+        });
+
+        document.getElementById('down-button').addEventListener('click', function() {
+            moveDown();
+        });
+
+        //refresh the page
+        function refreshPage() {
+            location.reload();
+        }
+
+        // The Tetrominoes
+        const lTetromino = [
+            [1, width + 1, width * 2 + 1, 2],
+            [width, width + 1, width + 2, width * 2 + 2],
+            [1, width + 1, width * 2 + 1, width * 2],
+            [width, width * 2, width * 2 + 1, width * 2 + 2]
+        ];
+
+        const zTetromino = [
+            [0, width, width + 1, width * 2 + 1],
+            [width + 1, width + 2, width * 2, width * 2 + 1],
+            [0, width, width + 1, width * 2 + 1],
+            [width + 1, width + 2, width * 2, width * 2 + 1]
+        ];
+
+        const tTetromino = [
+            [1, width, width + 1, width + 2],
+            [1, width + 1, width + 2, width * 2 + 1],
+            [width, width + 1, width + 2, width * 2 + 1],
+            [1, width, width + 1, width * 2 + 1]
+        ];
+
+        const oTetromino = [
+            [0, 1, width, width + 1],
+            [0, 1, width, width + 1],
+            [0, 1, width, width + 1],
+            [0, 1, width, width + 1]
+        ];
+
+        const iTetromino = [
+            [1, width + 1, width * 2 + 1, width * 3 + 1],
+            [width, width + 1, width + 2, width + 3],
+            [1, width + 1, width * 2 + 1, width * 3 + 1],
+            [width, width + 1, width + 2, width + 3]
+        ];
+
+        const theTetrominoes = [lTetromino, zTetromino, tTetromino, oTetromino, iTetromino];
+        let currentPosition = 4;
+        let currentRotation = 0;
+        
+        let random = Math.floor(Math.random()*theTetrominoes.length);
+        
+        
+        let current = theTetrominoes[random][currentRotation];
+
+        // Draw the Tetromino
+        function draw() {
+            current.forEach(index => {
+                squares[currentPosition + index].classList.add('tetromino');
+                squares[currentPosition + index].style.backgroundColor = skinColor[random];
+                squares[currentPosition + index].style.border = '1px solid black';
+            });
+        }
+
+        // undraw the Tetromino
+        function undraw() {
+            current.forEach(index => {
+                squares[currentPosition + index].classList.remove('tetromino');
+                squares[currentPosition + index].style.backgroundColor = '';
+                squares[currentPosition + index].style.border = '';
+            });
+        }
+
+        // Draw the Ghost Piece
+        function drawGhost() {
+             let ghostPosition = currentPosition;
+    
+                while (!current.some(index => squares[ghostPosition + index + width].classList.contains('taken'))) {
+                     ghostPosition += width;
+                 }
+    
+                 current.forEach(index => {
+                    squares[ghostPosition + index].classList.add('ghost');
+                 });
+            }
+            
+            // Undraw the Ghost Piece
+                    function undrawGhost() {
+             squares.forEach(square => {
+                  square.classList.remove('ghost');
+                 });
+                }
+
+        // assign function to keycodes
+        let moveDownInterval;
+        function control(e){
+            if(e.keyCode === 37 || e.keyCode === 65){
+                moveLeft();
+            }
+            else if (e.keyCode === 38 || e.keyCode === 87){
+                rotate();
+            }
+            else if(e.keyCode === 39 || e.keyCode === 68){
+                moveRight();
+            }
+            else if(e.keyCode === 40 || e.keyCode === 83){
+            moveDown();
+            }
+        }
+            document.addEventListener('keyup', control);
+
+            //move down function 
+             function moveDown() {
+            undraw();
+            undrawGhost();
+            currentPosition += width;
+            draw();
+            drawGhost();
+            freeze();
+        }
+                //freeze function 
+        function freeze() {
+            if (current.some(index => squares[currentPosition + index + width].classList.contains('taken'))) {
+                undrawGhost();
+                current.forEach(index => squares[currentPosition + index].classList.add('taken'));
+                random = nextRandom;
+                nextRandom = Math.floor(Math.random() * theTetrominoes.length);
+                current = theTetrominoes[random][currentRotation];
+                currentPosition = 4;
+                draw();
+                drawGhost();
+                displayShape();
+                addScore();
+                gameOver();
+         }
+      }
+    //move the tetromino left, unless its at the edge/ have any blockage
+    function moveLeft() {
+    undraw();
+    undrawGhost();
+    const isAtLeftEdge = current.some(index => (currentPosition + index) % width === 0);
+    if (!isAtLeftEdge) currentPosition -= 1;
+    if (current.some(index => squares[currentPosition + index].classList.contains('taken'))) {
+        currentPosition += 1;
+    }
+    draw();
+    drawGhost();
+}
+
+    //move the tetromino right, unless its at the edge/ have any blockage
+    function moveRight() {
+    undraw();
+    undrawGhost();
+    const isAtRightEdge = current.some(index => (currentPosition + index) % width === width - 1);
+    if (!isAtRightEdge) currentPosition += 1;
+    if (current.some(index => squares[currentPosition + index].classList.contains('taken'))) {
+        currentPosition -= 1;
+    }
+    draw();
+    drawGhost();
+}
+
+    //rotate the tetromino 
+    function rotate() {
+    undraw();
+    undrawGhost();
+    currentRotation++;
+    if (currentRotation === current.length) {
+        currentRotation = 0;
+    }
+    let newCurrent = theTetrominoes[random][currentRotation];
+
+    const isAtLeftEdge = newCurrent.some(index => (currentPosition + index) % width === 0);
+    const isAtRightEdge = newCurrent.some(index => (currentPosition + index) % width === width - 1);
+
+    if (!isAtLeftEdge && !isAtRightEdge && !newCurrent.some(index => squares[currentPosition + index].classList.contains('taken'))) {
+        current = newCurrent;
+    }
+    draw();
+    drawGhost();
+}
+
+    // to shownthe next tetromino in mini grid display
+    const displaySquares = document.querySelectorAll('.mini-grid div');
+    const displayWidth = 4;
+    let displayIndex = 0;
+
+    // tetrominos without rotations
+    const upNextTetrominos =[
+        [1, displayWidth+1, displayWidth*2+1, 2], //ltetromino
+        [0, displayWidth, displayWidth+1, displayWidth*2+1], //ztetromino
+        [1, displayWidth, displayWidth+1, displayWidth+2], //tteeromino
+        [0, 1, displayWidth, displayWidth+1], //otetromimo
+        [1, displayWidth+1, displayWidth*2+1, displayWidth*3+1] //iettromino
+    ]
+
+    //diplay the shape in mini grid
+    function displayShape(){
+        //remove any trace of tetromino from the grid
+        displaySquares.forEach(squares => {
+            squares.classList.remove('tetromino');
+            squares.style.backgroundColor = '';
+            squares.style.border = '';
+        })
+        upNextTetrominos[nextRandom].forEach(index => {
+            displaySquares[displayIndex + index].classList.add('tetromino');
+            displaySquares[displayIndex + index].style.backgroundColor = skinColor[random];
+            displaySquares[displayIndex + index].style.border = '1px solid black';
+        })
+    }
+
+    // adding funtionallity to the button
+    startBtn.addEventListener('click', () =>{
+        if(timeId){
+            clearInterval(timeId);
+            timeId = null;
+        }
+        else{
+            draw();
+            drawGhost();
+            timeId = setInterval(moveDown, 1000);
+            nextRandom = Math.floor(Math.random()*theTetrominoes.length);
+            displayShape();
+        }
+    })
+
+    // add score
+    function addScore(){
+        for(let i = 0; i < 199; i += width){
+            const row = [i, i + 1, i + 2, i + 3, i + 4, i + 5, i + 6, i + 7, i + 8, i + 9];
+
+            if(row.every(index => squares[index].classList.contains('taken'))){
+                score += 10;
+                scoreDisplay.innerHTML = score;
+
+                     // Add shake effect
+                     grid_shake.classList.add('shake');
+
+                    // Remove shake effect after animation completes
+                    setTimeout(() => {
+                    grid_shake.classList.remove('shake');
+                        }, 500);
+
+                row.forEach(index => {
+                    squares[index].classList.remove('taken');
+                    squares[index].classList.remove('tetromino');
+                    squares[index].style.backgroundColor = '';
+                    squares[index].style.border = '';
+                });
+                const squaresRemoved = squares.splice(i, width);
+                squares = squaresRemoved.concat(squares);
+                squares.forEach(cell => grid.appendChild(cell));
+            }
+        }
+    }
+    // game over function
+    function gameOver(){
+        if(current.some(index => squares[currentPosition + index].classList.contains('taken'))){
+            
+            clearInterval(timeId);
+            alert("Game over! Press restart to play again");
+        }
+    } 
+    </script>
+</body>
+</html>
